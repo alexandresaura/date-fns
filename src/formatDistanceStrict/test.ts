@@ -351,6 +351,17 @@ describe('formatDistanceStrict', () => {
       )
       assert(result === '1 minute')
     })
+    // 2022-10-13T10:15:24.570Z
+    // 2022-04-14T10:10:59.981Z
+    it.only('"floor"', () => {
+      const result = formatDistanceStrict(
+        new Date(2022, 3, 14, 10, 10, 10),
+        new Date(2022, 9, 14, 10, 10, 10),
+        { roundingMethod: 'floor' }
+      )
+      console.log(result)
+      assert(result === '5 months   a')
+    })
 
     it('"ceil"', () => {
       const result = formatDistanceStrict(

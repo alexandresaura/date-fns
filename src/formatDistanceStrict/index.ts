@@ -13,6 +13,8 @@ import defaultLocale from '../_lib/defaultLocale/index'
 import { getDefaultOptions } from '../_lib/defaultOptions/index'
 import getTimezoneOffsetInMilliseconds from '../_lib/getTimezoneOffsetInMilliseconds/index'
 import { getRoundingMethod } from '../_lib/roundingMethods/index'
+import getDaysInMonth from '../getDaysInMonth'
+import addMonths from '../addMonths'
 
 /**
  * The {@link formatDistanceStrict} function options.
@@ -188,7 +190,28 @@ export default function formatDistanceStrict<DateType extends Date>(
 
     // 1 up to 12 months
   } else if (unit === 'month') {
-    const months = roundingMethod(dstNormalizedMinutes / minutesInMonth)
+    let date = new Date(dateLeft)
+    let minutesBetweenMonths = 0
+    let monthQuantity = 1
+
+    while (date < dateRight) {
+      const days = getDaysInMonth(date)
+      minutesBetweenMonths += days * minutesInDay
+
+      addMonths(date, 1)
+      monthQuantity++
+    }
+
+    const months = roundingMethod(
+      dstNormalizedMinutes / (minutesBetweenMonths / monthQuantity)
+    )
+
+    //abril 30
+    //maio 31
+    //junho 30
+    //julho 31
+    //agosto 31
+    //setembro 30
     return months === 12 && defaultUnit !== 'month'
       ? locale.formatDistance('xYears', 1, localizeOptions)
       : locale.formatDistance('xMonths', months, localizeOptions)
